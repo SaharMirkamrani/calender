@@ -12,9 +12,10 @@ import { renderEmptyCells } from '../../utils/renderEmptyCells.tsx';
 type CalendarProps = {
   year: number;
   month: number;
+  minRangeDays: number;
 };
 
-const Calendar = ({ year, month }: CalendarProps) => {
+const Calendar = ({ year, month, minRangeDays }: CalendarProps) => {
   const [daysInMonth, setDaysInMonth] = useState<any[]>([]);
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,15 +60,41 @@ const Calendar = ({ year, month }: CalendarProps) => {
     );
   }
 
+  const convertToEnglishNumber = (persianNumber: string): string => {
+    const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+    const englishDigits = "0123456789";
+    
+    return persianNumber.split('').map(char => {
+      const index = persianDigits.indexOf(char);
+      return index === -1 ? char : englishDigits[index];
+    }).join('');
+  };
+  
+
   const handleDayClick = (jalaliDay: string) => {
+    const selectedDay = convertToEnglishNumber(jalaliDay);
     const { start, end } = calendarStore.selectedRange;
 
     if (!start || end) {
-      calendarStore.setSelectedRange(jalaliDay, null);
+      calendarStore.setSelectedRange(selectedDay, null);
     } else {
-      calendarStore.setSelectedRange(start, jalaliDay);
+      const selectedRangeDays = Number(selectedDay) - Number(start);
+
+      if (selectedRangeDays < 0) {
+        alert("The end date cannot be earlier than the start date. Please select a valid range.");
+        return;
+      }
+  
+      if (selectedRangeDays > minRangeDays) {
+        alert(`You can only select a range of up to ${minRangeDays} days.`);
+        calendarStore.setSelectedRange(null, null);
+        return;
+      }
+      
+      calendarStore.setSelectedRange(start, selectedDay);
     }
   };
+  
 
   return (
     <div
@@ -102,7 +129,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center relative">
-        {renderEmptyCells(firstDayOfWeek)} 
+        {renderEmptyCells(firstDayOfWeek)}
         {daysInMonth.map((dayObj, index) => {
           const { day, disabled } = dayObj;
           const jalaliDay = day.jalali;
@@ -112,14 +139,21 @@ const Calendar = ({ year, month }: CalendarProps) => {
           if (disabled) {
             dayClasses += " text-gray-300 cursor-not-allowed";
           } else {
-            // @ts-ignore
-            if (isDayInRange(jalaliDay, calendarStore.selectedRange)) {
-              dayClasses = "p-2 rounded-full bg-purple-400 text-white border border-transparent";
-            }
+            const isInRange = isDayInRange(
+              // @ts-ignore
+              convertToEnglishNumber(jalaliDay),
+              calendarStore.selectedRange
+            );
 
             const { start, end } = calendarStore.selectedRange;
-            if (jalaliDay === start || jalaliDay === end) {
+            const isStartOrEnd =
+              convertToEnglishNumber(jalaliDay) === start ||
+              convertToEnglishNumber(jalaliDay) === end;
+
+            if (isStartOrEnd) {
               dayClasses = "p-2 rounded-full bg-black text-white border border-transparent";
+            } else if (isInRange) {
+              dayClasses = "p-2 rounded-full bg-purple-400 text-white border border-transparent";
             }
           }
 
@@ -134,6 +168,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
           );
         })}
       </div>
+
     </div>
   );
 };

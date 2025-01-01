@@ -52,7 +52,7 @@ const CalendarContainer = () => {
     );
   }
 
-  return <Calendar year={year} month={month} />;
+  return <Calendar year={year} month={month} minRangeDays={25} />;
 };
 
 export default CalendarContainer;
