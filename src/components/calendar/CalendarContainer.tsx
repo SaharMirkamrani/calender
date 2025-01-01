@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Calendar from "./Calendar.tsx"; // Assuming Calendar component is in a separate file
+import Calendar from "./Calendar.tsx";
 
 const CalendarContainer = () => {
   const [year, setYear] = useState<number | null>(null);
@@ -7,8 +7,8 @@ const CalendarContainer = () => {
 
   useEffect(() => {
     const convertPersianToEnglishDigits = (persianStr: string) => {
-      const persianDigits = "۰۱۲۳۴۵۶۷۸۹"; // Persian numerals
-      const englishDigits = "0123456789"; // Standard numerals
+      const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+      const englishDigits = "0123456789";
       return persianStr
         .split("")
         .map((char) =>
@@ -27,18 +27,12 @@ const CalendarContainer = () => {
         });
 
         const formattedDate = jalaliFormatter.format(new Date());
-        console.log("Formatted Jalali Date:", formattedDate); // Log the formatted Jalali date (e.g., ۱۴۰۳/۱۰)
 
-        // Convert Persian numerals to English numerals
         const normalizedDate = convertPersianToEnglishDigits(formattedDate);
-        console.log("Normalized Jalali Date:", normalizedDate); // e.g., 1403/10
 
         const [jalaliYear, jalaliMonth] = normalizedDate
           .split("/")
           .map((value) => parseInt(value, 10));
-
-        console.log("Parsed Jalali Year:", jalaliYear);
-        console.log("Parsed Jalali Month:", jalaliMonth);
 
         setYear(jalaliYear);
         setMonth(jalaliMonth);
