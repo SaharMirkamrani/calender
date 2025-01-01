@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import { MdArrowForwardIos } from "react-icons/md";
-import { MdArrowBackIosNew } from "react-icons/md";
-import { convertToPersianNumber } from '../../utils/dateUtils.ts';
-import { weekDays, persianMonthNames, isDayInRange } from '../../utils/calendarUtils.ts';
-import { fetchDaysInMonth } from '../../utils/calendarApi.ts';
+import { toJalaali } from "jalaali-js";
+import { observer } from "mobx-react";
+import React, { useEffect, useRef, useState } from "react";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 import useMonthYear from '../../hooks/useMonthYear.ts';
-import { useHandleDayClick } from '../../hooks/useHandleDayClick.ts';
-import { renderEmptyCells } from '../../utils/renderEmptyCells.tsx'
+import calendarStore from "../../store.ts";
+import { fetchDaysInMonth } from '../../utils/calendarApi.ts';
+import { isDayInRange, persianMonthNames, weekDays } from '../../utils/calendarUtils.ts';
+import { convertToPersianNumber } from '../../utils/dateUtils.ts';
+import { renderEmptyCells } from '../../utils/renderEmptyCells.tsx';
 
 type CalendarProps = {
   year: number;
@@ -20,17 +21,24 @@ const Calendar = ({ year, month }: CalendarProps) => {
 
   const { currentYear, currentMonth, handleNextMonth, handlePrevMonth } = useMonthYear(year, month);
 
-  const { selectedRange, handleDayClick } = useHandleDayClick();
-
   const monthName = persianMonthNames[currentMonth - 1];
 
   const calendarRef = useRef<HTMLDivElement>(null);
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    const gregorianDate = toJalaali(year, month, 1);
+    const date = new Date(gregorianDate.gy, gregorianDate.gm - 1, gregorianDate.gd);
+    return date.getDay();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const { days, startIndex } = await fetchDaysInMonth(currentYear, currentMonth);
+        const startIndex = getFirstDayOfMonth(currentYear, currentMonth);
+
+        const { days } = await fetchDaysInMonth(currentYear, currentMonth);
+
         setDaysInMonth(days);
         setFirstDayOfWeek(startIndex);
       } catch (error) {
@@ -51,11 +59,21 @@ const Calendar = ({ year, month }: CalendarProps) => {
     );
   }
 
+  const handleDayClick = (jalaliDay: string) => {
+    const { start, end } = calendarStore.selectedRange;
+
+    if (!start || end) {
+      calendarStore.setSelectedRange(jalaliDay, null);
+    } else {
+      calendarStore.setSelectedRange(start, jalaliDay);
+    }
+  };
+
   return (
     <div
       ref={calendarRef}
       className="w-[400px] mx-auto bg-white border border-gray-900 rounded-3xl p-6"
-      dir='rtl'
+      dir="rtl"
     >
       <header className="text-center mb-4 relative flex justify-between items-center">
         <button
@@ -92,13 +110,15 @@ const Calendar = ({ year, month }: CalendarProps) => {
           let dayClasses = "p-2 rounded-full border border-transparent hover:border-gray-700 transition";
 
           if (disabled) {
-            dayClasses += "text-gray-300 cursor-not-allowed";
+            dayClasses += " text-gray-300 cursor-not-allowed";
           } else {
-            if (isDayInRange(jalaliDay, selectedRange)) {
+            // @ts-ignore
+            if (isDayInRange(jalaliDay, calendarStore.selectedRange)) {
               dayClasses = "p-2 rounded-full bg-purple-400 text-white border border-transparent";
             }
-          
-            if (jalaliDay === selectedRange.start || jalaliDay === selectedRange.end) {
+
+            const { start, end } = calendarStore.selectedRange;
+            if (jalaliDay === start || jalaliDay === end) {
               dayClasses = "p-2 rounded-full bg-black text-white border border-transparent";
             }
           }
@@ -118,4 +138,4 @@ const Calendar = ({ year, month }: CalendarProps) => {
   );
 };
 
-export default Calendar;
+export default observer(Calendar);

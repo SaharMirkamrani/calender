@@ -6,6 +6,8 @@ export const fetchDaysInMonth = async (year: number, month: number) => {
   try {
     const response = await axios.get(`${API_URL}/${year}/${month}`);
     const data = response.data;
+
+    console.log(data)
     
     const monthData = data[month - 1];
 
