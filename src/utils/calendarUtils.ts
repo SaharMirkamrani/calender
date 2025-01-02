@@ -8,9 +8,11 @@ export const persianMonthNames = [
 export const isDayInRange = (
   day: number,
   selectedRange: { start: number | null; end: number | null }
-): boolean => {
-  if (selectedRange.start && selectedRange.end) {
-    return day > selectedRange.start && day < selectedRange.end;
+): boolean =>
+{
+  if (selectedRange.start && selectedRange.end)
+  {
+    return Number(day) > Number(selectedRange.start) && Number(day) < Number(selectedRange.end);
   }
   return false;
 };

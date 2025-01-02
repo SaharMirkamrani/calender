@@ -73,29 +73,36 @@ const Calendar = ({ year, month, minRangeDays }: CalendarProps) => {
 
   const handleDayClick = (jalaliDay: string) => {
     const selectedDay = convertToEnglishNumber(jalaliDay);
-    const { start, end } = calendarStore.selectedRange;
-
-    if (!start || end) {
-      calendarStore.setSelectedRange(selectedDay, null);
-    } else {
-      const selectedRangeDays = Number(selectedDay) - Number(start);
-
-      if (selectedRangeDays < 0) {
-        alert("The end date cannot be earlier than the start date. Please select a valid range.");
-        return;
-      }
-  
-      if (selectedRangeDays > minRangeDays) {
-        alert(`You can only select a range of up to ${minRangeDays} days.`);
-        calendarStore.setSelectedRange(null, null);
-        return;
-      }
-      
-      calendarStore.setSelectedRange(start, selectedDay);
+    var { start, end } = calendarStore.selectedRange;
+    
+    if (start && end) {
+      calendarStore.setSelectedRange(null, null);
+      start = null;
+      end = null;
     }
+
+    if (!start) {
+      calendarStore.setSelectedRange(selectedDay, null);
+      return;
+    }
+
+    const selectedRangeDays = Number(selectedDay) - Number(start);
+
+    if (selectedRangeDays < 0) {
+      alert("The end date cannot be earlier than the start date. Please select a valid range.");
+      calendarStore.setSelectedRange(null, null);
+      return;
+    }
+
+    if (selectedRangeDays > minRangeDays) {
+      alert(`You can only select a range of up to ${minRangeDays} days.`);
+      calendarStore.setSelectedRange(null, null);
+      return;
+    }
+
+    calendarStore.setSelectedRange(start, selectedDay);
   };
   
-
   return (
     <div
       ref={calendarRef}
