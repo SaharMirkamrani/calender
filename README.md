@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# Calendar Component Task
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This task involved building a reusable **Calendar Component** with the ability to select a range of dates. The component is designed for Persian users, making use of **RTL (Right-to-Left)** layout and **Jalaali calendar** logic for better user experience. The component integrates state management using **MobX** and fetches Persian days and months from an external API.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+1. **Reusable Component**: 
+   - The calendar component is built to be easily reusable in other parts of the project.
+2. **Range Selection**: 
+   - Users can select a range of dates, ensuring the start date is earlier than the end date.
+   - Validations are included to restrict ranges beyond a specified number of days (`minRangeDays`).
+3. **RTL Layout**: 
+   - The component layout follows a Right-to-Left (RTL) direction for better alignment with Persian users.
+4. **State Management**: 
+   - **MobX** is used to store and manage the selected date range, making it accessible across the application.
+5. **Jalaali Date Support**: 
+   - The **Jalaali-js** library is utilized to handle Persian dates.
+6. **Custom Styles**: 
+   - Fully styled from scratch using **TailwindCSS**, without relying on any pre-built styling libraries or calendar components.
+7. **API Integration**: 
+   - Days and months are fetched from the following API:
+     ```
+     https://persian-calendar-api.sajjadth.workers.dev
+     ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Libraries Used
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **React**: For building the component.
+- **TypeScript**: For type safety and cleaner development.
+- **TailwindCSS**: For styling the component from scratch.
+- **MobX**: For state management to store the selected range object globally.
+- **Jalaali-js**: For converting and working with Jalaali dates.
+- **API Endpoint**: 
+  - Fetched Persian calendar data (days, months) from:
+    ```
+    https://persian-calendar-api.sajjadth.workers.dev
+    ```
 
-### `npm test`
+## Implementation Details
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Custom Design**: 
+   - The calendar was implemented entirely from scratch to match the provided Figma design.
+   - Adjustments were made to use **RTL** instead of the original **LTR** layout for improved user experience.
+   
+2. **State Management**: 
+   - The selected date range (`start` and `end`) is stored in a **MobX store** and is accessible throughout the application.
 
-### `npm run build`
+3. **Validation**: 
+   - Ensured the start date is earlier than the end date.
+   - Limited the maximum number of days in the selected range based on `minRangeDays`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **Reusable Hook**: 
+   - A custom hook, `useMonthYear`, was implemented to handle month and year navigation.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. **API Integration**: 
+   - Used the **Persian Calendar API** to fetch days and months dynamically for each month.
+   
+6. **Custom Styling**: 
+   - All styles were written from scratch using **TailwindCSS** without relying on pre-built libraries.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Installation and Setup
 
-### `npm run eject`
+I used NPM to install packages.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Key Notes
+- Development Time: Completed the task in approximately 5-6 hours.
+- Custom Implementation: The calendar component was built completely from scratch without using any external calendar packages or pre-built components.
+- Enhancements: Although the Figma design was in LTR, I switched to RTL for a better experience for Persian users.
